@@ -31,6 +31,8 @@ public class MainActivity extends AppCompatActivity {
     }
 
     public void getDataFromDb() {
+        List<Note> itemList = new ArrayList<>();
+
         RecyclerView recyclerView = (RecyclerView)findViewById(R.id.rv);
         recyclerView.setHasFixedSize(true);
 
@@ -42,34 +44,30 @@ public class MainActivity extends AppCompatActivity {
         ContentValues cv = new ContentValues();
 
         String[] projection = {
-                dbHelper.getTitle(),
-                dbHelper.getDescription(),
-                dbHelper.getDate()
+                DbHelper.getTitle(),
+                DbHelper.getDescription(),
+                DbHelper.getDate()
         };
 
-        String sortOrder = dbHelper.getDate() + " DESC";
+        String sortOrder = DbHelper.getDate() + " DESC";
 
         Cursor c = db.query(
-                dbHelper.getTableName(),projection,null,null,null,null,sortOrder);
+                DbHelper.getTableName(),projection,null,null,null,null,sortOrder);
+        if (c.getCount() != 0){
+            c.moveToFirst();
 
-        if (c.getCount() == 0)
-            return;
-
-        c.moveToFirst();
-
-        List<Note> itemList = new ArrayList<>();
-
-        while(!c.isClosed()){
-            Note note = new Note(
-                    c.getString(c.getColumnIndex(dbHelper.getTitle())),
-                    c.getString(c.getColumnIndex(dbHelper.getDescription())),
-                    c.getString(c.getColumnIndex(dbHelper.getDate()))
-            );
-            itemList.add(note);
-            if(c.isLast())
-                c.close();
-            else
-                c.move(1);
+            while(!c.isClosed()){
+                Note note = new Note(
+                        c.getString(c.getColumnIndex(DbHelper.getTitle())),
+                        c.getString(c.getColumnIndex(DbHelper.getDescription())),
+                        c.getString(c.getColumnIndex(DbHelper.getDate()))
+                );
+                itemList.add(note);
+                if(c.isLast())
+                    c.close();
+                else
+                    c.move(1);
+            }
         }
 
         RecyclerViewAdapter rcAdapter = new RecyclerViewAdapter(MainActivity.this, itemList);
