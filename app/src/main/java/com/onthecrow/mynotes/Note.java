@@ -1,8 +1,5 @@
 package com.onthecrow.mynotes;
 
-import android.database.DatabaseUtils;
-import android.database.sqlite.SQLiteDatabase;
-
 /**
  * Created by the-crow on 23.03.2017.
  */
@@ -39,11 +36,5 @@ public class Note {
 
     public void setDate(String date) {
         this.date = date;
-    }
-
-    public static int deleteNote(Note note){
-        DbHelper dbHelper = new DbHelper(MainActivity.getInstance());
-        SQLiteDatabase db = dbHelper.getWritableDatabase();
-        return db.delete(dbHelper.getTableName(),"date = " + DatabaseUtils.sqlEscapeString(note.date),null);
     }
 }

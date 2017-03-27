@@ -2,7 +2,6 @@ package com.onthecrow.mynotes;
 
 import android.content.ContentValues;
 import android.content.Intent;
-import android.database.DatabaseUtils;
 import android.database.sqlite.SQLiteDatabase;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -55,26 +54,19 @@ public class CreateNote extends AppCompatActivity {
 
         EditText title = (EditText)findViewById(R.id.title);
         EditText description = (EditText)findViewById(R.id.description);
+        TextView date = (TextView)findViewById(R.id.dateView);
 
-        Calendar c = Calendar.getInstance();
-        SimpleDateFormat df = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-        String formattedDate = df.format(c.getTime());
+        Note note = new Note(
+                title.getText().toString(),
+                description.getText().toString(),
+                date.getText().toString());
         if(isChanging){
-            cv.put(dbHelper.getTitle(), title.getText().toString());
-            cv.put(dbHelper.getDescription(), description.getText().toString());
-            db.update(dbHelper.getTableName(), cv,
-                    "date = "
-                            + DatabaseUtils.sqlEscapeString(((TextView)findViewById(R.id.dateView)).getText().toString()),
-                    null);
-            MainActivity.getInstance().getDataFromDb();
-            MainActivity.getInstance().getAdapter().notifyDataSetChanged();
+            dbHelper.updateNote(note);
+            //MainActivity.getInstance().getDataFromDb();
         } else {
-            cv.put(dbHelper.getTitle(), title.getText().toString());
-            cv.put(dbHelper.getDescription(), description.getText().toString());
-            cv.put(dbHelper.getDate(), formattedDate);
-            db.insert(dbHelper.getTableName(), null, cv);
+            dbHelper.insertNote(note);
         }
-        db.close();
-        this.finish();
+        Intent intent = new Intent(view.getContext(), MainActivity.class);
+        startActivity(intent);
     }
 }

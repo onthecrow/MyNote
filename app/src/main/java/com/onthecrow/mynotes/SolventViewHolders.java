@@ -7,6 +7,7 @@ import android.content.Intent;
 import android.support.v7.widget.RecyclerView;
 import android.view.View;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import java.util.List;
 
@@ -33,12 +34,10 @@ public class SolventViewHolders extends RecyclerView.ViewHolder implements View.
                         new DialogInterface.OnClickListener() {
                             public void onClick(DialogInterface dialog, int id) {
                                 Intent intent = new Intent(context,CreateNote.class);
-
                                 intent.putExtra("Title",currentNote.getTitle());
                                 intent.putExtra("Description",currentNote.getDescription());
                                 intent.putExtra("Date",currentNote.getDate());
                                 intent.putExtra("IsChanging", "change");
-
                                 context.startActivity(intent);
                             }
                         });
@@ -46,10 +45,12 @@ public class SolventViewHolders extends RecyclerView.ViewHolder implements View.
                         "Удалить",
                         new DialogInterface.OnClickListener() {
                             public void onClick(DialogInterface dialog, int id) {
-                                if(Note.deleteNote(currentNote) == 1);
+                                DbHelper dbHelper = new DbHelper(context);
+                                if(dbHelper.deleteNote(currentNote) == 1){
                                     itemList.remove(currentNote);
-                                MainActivity.getInstance().getAdapter().notifyDataSetChanged();
-                                //MainActivity.getInstance().getDataFromDb();
+                                    MainActivity.getInstance().getDataFromDb();
+                                    Toast.makeText(context, "Заметка удалена", Toast.LENGTH_SHORT).show();
+                                }
                             }
                         });
                 AlertDialog alert11 = builder1.create();
